@@ -39,11 +39,81 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
-  
-  const app = express();
-  
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+const ToDoManager = require('./ToDoManager.js');
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+app.use(bodyParser.json());
+
+const filename = 'todos.json';
+const manager = new ToDoManager(filename);
+ 
+app.get('/todos', function(req, res) {
+  let todos = manager.readTodos();
+  res.status(200).json(todos);
+});
+
+app.get('/todos/:id', function(req, res) {
+  const id = req.params.id;
+  const todo = manager.getTodo(id);
+  if (todo == null)
+    return res.status(404).send();
+  else 
+    res.status(200).json(todo);
+});
+
+/**
+  3. POST /todos - Create a new todo item
+    Description: Creates a new todo item.
+    Request Body: JSON object representing the todo item.
+    Response: 201 Created with the ID of the created todo item in JSON format. eg: {id: 1}
+    Example: POST http://localhost:3000/todos
+    Request Body: { "title": "Buy groceries", "completed": false, description: "I should buy groceries" }
+*/
+
+app.post('/todos', function(req, res) {
+  const todo = req.body;
+  console.log(todo);
+  const id = manager.createTodo(todo.title, todo.description);
+  res.status(201).json({id: id});
+});
+
+/**
+  4. PUT /todos/:id - Update an existing todo item by ID
+    Description: Updates an existing todo item identified by its ID.
+    Request Body: JSON object representing the updated todo item.
+    Response: 200 OK if the todo item was found and updated, or 404 Not Found if not found.
+    Example: PUT http://localhost:3000/todos/123
+    Request Body: { "title": "Buy groceries", "completed": true }
+*/
+
+app.put('/todos/:id', function(req, res) {
+  const updatedTodo = req.body;
+  const id = req.params.id;
+  const isUpdated = manager.updateTodo(id, updatedTodo);
+  if (isUpdated)
+    res.status(200).send("Todo updated");
+  else
+    res.status(404).send("Todo not found");
+});
+
+app.delete('/todos/:id', function (req, res) {
+  const id = req.params.id;
+  let isDeleted = manager.deleteTodo(id);
+  if (isDeleted)
+    res.status(200).send('Todo Deleted');
+  else 
+    res.status(404).send('Todo not found');
+});
+
+app.use(function(req, res) {
+  res.status(404).send('Todo not found');
+});
+
+ //app.listen(3000);
+
+module.exports = app;
