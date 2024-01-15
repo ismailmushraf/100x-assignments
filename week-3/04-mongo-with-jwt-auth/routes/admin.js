@@ -11,6 +11,7 @@ const router = Router();
 router.use(express.json());
 
 // Admin Routes
+<<<<<<< HEAD
 router.post('/signup', async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -70,6 +71,22 @@ router.get('/courses', adminMiddleware, (req, res) => {
         'courses': courses
       })
     })
+=======
+router.post('/signup', (req, res) => {
+    // Implement admin signup logic
+});
+
+router.post('/signin', (req, res) => {
+    // Implement admin signup logic
+});
+
+router.post('/courses', adminMiddleware, (req, res) => {
+    // Implement course creation logic
+});
+
+router.get('/courses', adminMiddleware, (req, res) => {
+    // Implement fetching all courses logic
+>>>>>>> 64d59d4b4e10a26511065d31f1ed80be15dc7080
 });
 
 module.exports = router;

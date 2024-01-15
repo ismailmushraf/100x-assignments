@@ -9,6 +9,7 @@ const SecretPassword = "secret";
 router.use(express.json());
 
 // User Routes
+<<<<<<< HEAD
 router.post('/signup', async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -80,3 +81,26 @@ router.get('/purchasedCourses', userMiddleware, async (req, res) => {
 });
 
 module.exports = router;
+=======
+router.post('/signup', (req, res) => {
+    // Implement user signup logic
+});
+
+router.post('/signin', (req, res) => {
+    // Implement admin signup logic
+});
+
+router.get('/courses', (req, res) => {
+    // Implement listing all courses logic
+});
+
+router.post('/courses/:courseId', userMiddleware, (req, res) => {
+    // Implement course purchase logic
+});
+
+router.get('/purchasedCourses', userMiddleware, (req, res) => {
+    // Implement fetching purchased courses logic
+});
+
+module.exports = router
+>>>>>>> 64d59d4b4e10a26511065d31f1ed80be15dc7080

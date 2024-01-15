@@ -8,6 +8,7 @@ router.use(express.json());
 
 // User Routes
 router.post('/signup', (req, res) => {
+<<<<<<< HEAD
   const username = req.body.username;
   const password = req.body.password;
 
@@ -44,6 +45,17 @@ router.post('/courses/:courseId', userMiddleware, (req, res) => {
   } else {
     res.status(404).send("Course Id is not correct.");
   }
+=======
+    // Implement user signup logic
+});
+
+router.get('/courses', (req, res) => {
+    // Implement listing all courses logic
+});
+
+router.post('/courses/:courseId', userMiddleware, (req, res) => {
+    // Implement course purchase logic
+>>>>>>> 64d59d4b4e10a26511065d31f1ed80be15dc7080
 });
 
 router.get('/purchasedCourses', userMiddleware, (req, res) => {
@@ -54,4 +66,8 @@ router.get('/purchasedCourses', userMiddleware, (req, res) => {
   });
 });
 
+<<<<<<< HEAD
 module.exports = router;
+=======
+module.exports = router
+>>>>>>> 64d59d4b4e10a26511065d31f1ed80be15dc7080
