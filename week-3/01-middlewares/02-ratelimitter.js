@@ -14,8 +14,21 @@ const app = express();
 let numberOfRequestsForUser = {};
 setInterval(() => {
     numberOfRequestsForUser = {};
-}, 1000)
+}, 1000);
 
+function rateLimitter(req, res, next) {
+  let userId = req.headers["user-id"];
+  if (!(userId in numberOfRequestsForUser)) {
+    numberOfRequestsForUser[userId] = 0;
+  } else {
+    if (numberOfRequestsForUser[userId] >= 5)
+      return res.status(404).json({"msg": "you have exceeded the maximum calls in a second."})
+    numberOfRequestsForUser[userId] += 1;
+  }
+  next();
+}
+
+app.use(rateLimitter);
 app.get('/user', function(req, res) {
   res.status(200).json({ name: 'john' });
 });
