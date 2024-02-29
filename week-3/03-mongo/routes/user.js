@@ -8,7 +8,6 @@ router.use(express.json());
 
 // User Routes
 router.post('/signup', (req, res) => {
-<<<<<<< HEAD
   const username = req.body.username;
   const password = req.body.password;
 
@@ -33,29 +32,17 @@ router.get('/courses', (req, res) => {
 
 router.post('/courses/:courseId', userMiddleware, (req, res) => {
   const courseId = req.params.courseId;
-  const course = Course.findOne({
-    id: courseId
+  const username = req.headers.username;
+  User.updateOne({
+    username: username
+  }, {
+    "$push": {
+      purchasedCourses: courseId
+    }
   });
-  if (course) {
-    const user = req.user;
-    user.purchasedCourses.push(courseId);
-    res.json({
-      'message': 'Course purchaed successfully'
-    });
-  } else {
-    res.status(404).send("Course Id is not correct.");
-  }
-=======
-    // Implement user signup logic
-});
-
-router.get('/courses', (req, res) => {
-    // Implement listing all courses logic
-});
-
-router.post('/courses/:courseId', userMiddleware, (req, res) => {
-    // Implement course purchase logic
->>>>>>> 64d59d4b4e10a26511065d31f1ed80be15dc7080
+  res.json({
+    'message': 'Course purchased successfully'
+  });
 });
 
 router.get('/purchasedCourses', userMiddleware, (req, res) => {
@@ -66,8 +53,4 @@ router.get('/purchasedCourses', userMiddleware, (req, res) => {
   });
 });
 
-<<<<<<< HEAD
 module.exports = router;
-=======
-module.exports = router
->>>>>>> 64d59d4b4e10a26511065d31f1ed80be15dc7080

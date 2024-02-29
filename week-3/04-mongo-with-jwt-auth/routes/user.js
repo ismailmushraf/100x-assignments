@@ -9,7 +9,6 @@ const SecretPassword = "secret";
 router.use(express.json());
 
 // User Routes
-<<<<<<< HEAD
 router.post('/signup', async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -34,11 +33,22 @@ router.post('/signin', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  const token = jwt.sign({username: username}, SecretPassword);
-
-  res.json({
-    'token': token
+  const user = User.findOne({
+    username,
+    password
   });
+
+  if (user) {
+    const token = jwt.sign({username: username}, SecretPassword);
+
+    res.json({
+      'token': token
+    });
+  } else {
+    res.status(411).send({
+      message: "Invalid username or password"
+    });
+  }
 });
 
 router.get('/courses', userMiddleware, (req, res) => {
@@ -54,9 +64,13 @@ router.post('/courses/:courseId', userMiddleware, async (req, res) => {
   const username = req.username;
   const courseId = req.params.courseId;
 
-  const user = await User.findOne({username: username});
-  user.purchasedCourses.push(courseId);
-  user.save();
+  User.updateOne({
+    username: username
+  }, {
+    "$push": {
+      purchasedCourses: courseId
+    }
+  });
 
   res.json({
     'message': "Course purchased successfully"
@@ -67,40 +81,15 @@ router.get('/purchasedCourses', userMiddleware, async (req, res) => {
   const username = req.username;
   const user = await User.findOne({username: username});
 
-  const purchasedCourses = [];
-  const courses = await Course.find();
-  courses.forEach(course => {
-    if (user.purchasedCourses.includes(course.id)) {
-      purchasedCourses.push(course); 
+  const courses = await Course.find({
+    courseId: {
+      "$in": user.purchasedCourses
     }
   });
 
   res.json({
-    'purchasedCourses': purchasedCourses
+    'purchasedCourses': courses
   });
 });
 
 module.exports = router;
-=======
-router.post('/signup', (req, res) => {
-    // Implement user signup logic
-});
-
-router.post('/signin', (req, res) => {
-    // Implement admin signup logic
-});
-
-router.get('/courses', (req, res) => {
-    // Implement listing all courses logic
-});
-
-router.post('/courses/:courseId', userMiddleware, (req, res) => {
-    // Implement course purchase logic
-});
-
-router.get('/purchasedCourses', userMiddleware, (req, res) => {
-    // Implement fetching purchased courses logic
-});
-
-module.exports = router
->>>>>>> 64d59d4b4e10a26511065d31f1ed80be15dc7080
